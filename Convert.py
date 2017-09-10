@@ -1,3 +1,4 @@
+
 def joinComments(line):
   columns = line.split(" ")
   for el in range(len(columns)):
@@ -16,8 +17,8 @@ def readFile(fileName):
 def processLine(line, lineNumber):
   columns, comment = joinComments(line)
   if lineNumber == 1: getAttributes(columns)
-  getData(columns)
-  writeFile("newTest.txt", columns)
+  #getData(columns)
+  writeFile("newTest.txt", columns, comment)
 
 def getAttributes(columns):
   attributes = []
@@ -34,10 +35,11 @@ def getData(columns):
     values.append(data)
   return values, relevanceLabel
 
-def writeFile(fileName, columns):
-  with open(fileName) as f:
-    f.write(getData(columns)[0])
-    f.write(getData(columns)[1])
-    f.write(getAttributes(columns))
+def writeFile(fileName, columns, comments):
+  with open(fileName, "a") as f:
+    f.write(",".join(getData(columns)[0]))
+    f.write("," + getData(columns)[1])
+    f.write("   %" + comments[1:])
+    #f.write("\n")
 
 readFile("test.txt")
