@@ -11,12 +11,12 @@ def readFile(fileName):
   lineNumber = 1
   with open(fileName) as fp:
     for line in fp:
-      processLine(line, lineNumber)
+      processLine(fileName, line, lineNumber)
       lineNumber+=1
 
-def processLine(line, lineNumber):
+def processLine(readFileName, line, lineNumber):
   columns, comment = joinComments(line)
-  writeFile("newTest.txt", columns, comment, lineNumber)
+  writeFile(readFileName, "newTest.txt", columns, comment, lineNumber)
 
 def getAttributes(columns):
   attributes = []
@@ -43,16 +43,17 @@ def processLabels(columns):
         relevanceLabel = "HIGH"
     return relevanceLabel
 
-def writeFile(fileName, columns, comments, lineNumber):
+def writeFile(readFileName, fileName, columns, comments, lineNumber):
   with open(fileName, "a") as f:
-      if lineNumber==1:
-          for piece in getAttributes(columns):
-              f.write("@ATTRIBUTE " + piece + "\t REAL\n")
-          f.write("@ATTRIBUTE class     {NONE,LOW,HIGH}")
-          f.write("\n\n")
+    if lineNumber==1:
+      f.write("@RELATION " + readFileName[:len(readFileName)-4] + "\n\n")
+      for piece in getAttributes(columns):
+        f.write("@ATTRIBUTE " + piece + "\t REAL\n")
+      f.write("@ATTRIBUTE class     {NONE,LOW,HIGH}")
+      f.write("\n\n@DATA\n")
 
-      f.write(",".join(getData(columns)[0]))
-      f.write("," + processLabels(columns))
-      f.write("\t%" + comments[1:])
+    f.write(",".join(getData(columns)[0]))
+    f.write("," + processLabels(columns))
+    f.write("\t%" + comments[1:])
 
 readFile("test.txt")
