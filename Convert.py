@@ -16,9 +16,7 @@ def readFile(fileName):
 
 def processLine(line, lineNumber):
   columns, comment = joinComments(line)
-  if lineNumber == 1: getAttributes(columns)
-  #getData(columns)
-  writeFile("newTest.txt", columns, comment)
+  writeFile("newTest.txt", columns, comment, lineNumber)
 
 def getAttributes(columns):
   attributes = []
@@ -35,11 +33,26 @@ def getData(columns):
     values.append(data)
   return values, relevanceLabel
 
-def writeFile(fileName, columns, comments):
+def processLabels(columns):
+    useless, relevanceLabel = getData(columns)
+    if relevanceLabel=="0":
+        relevanceLabel= "NONE"
+    elif relevanceLabel=="1":
+        relevanceLabel= "LOW"
+    elif relevanceLabel=="2":
+        relevanceLabel = "HIGH"
+    return relevanceLabel
+
+def writeFile(fileName, columns, comments, lineNumber):
   with open(fileName, "a") as f:
-    f.write(",".join(getData(columns)[0]))
-    f.write("," + getData(columns)[1])
-    f.write("   %" + comments[1:])
-    #f.write("\n")
+      if lineNumber==1:
+          for piece in getAttributes(columns):
+              f.write("@ATTRIBUTE " + piece + "\t REAL\n")
+          f.write("@ATTRIBUTE class     {NONE,LOW,HIGH}")
+          f.write("\n\n")
+
+      f.write(",".join(getData(columns)[0]))
+      f.write("," + processLabels(columns))
+      f.write("\t%" + comments[1:])
 
 readFile("test.txt")
